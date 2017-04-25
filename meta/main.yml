@@ -1,8 +1,9 @@
 ---
 galaxy_info:
-author: Katharine Cordes
-description: Installs MySql 5.7 on Ubuntu 16.04.
-platforms:
-- name: Ubuntu
-versions:
-- xenial
+  author: Katharine Cordes
+  description: Installs MySql 5.7 on Ubuntu 16.04.
+  min_ansible_version: 1.9
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial
