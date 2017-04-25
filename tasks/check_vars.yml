@@ -1,0 +1,5 @@
+---
+- name: check mysql_root_password is defined
+  fail:
+    msg: "mysql_root_password must be defined. Example: 'PaSsWoRd'"
+  when: mysql_root_password is not defined
