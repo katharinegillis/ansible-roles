@@ -1,5 +1,11 @@
 ---
 - name: check mysql_root_password is defined
-  fail:
+  debug:
     msg: "mysql_root_password must be defined. Example: 'PaSsWoRd'"
+  register: mysql_root_password_check
   when: mysql_root_password is not defined
+
+- name: fail if missing variables
+  fail:
+    msg: "Required variables were missing. See above."
+  when: mysql_root_password_check.skipped is not defined
