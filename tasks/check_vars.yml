@@ -1,0 +1,29 @@
+---
+- name: check db_name is defined
+  debug:
+    msg: "db_name must be defined."
+  register: db_name_check
+  when: db_name is not defined
+
+- name: check db_vault_pass is defined
+  debug:
+    msg: "db_vault_pass must be defined."
+  register: db_vault_pass_check
+  when: db_vault_pass is not defined
+
+- name: check db_local_dir is defined
+  debug:
+    msg: "db_local_dir must be dfined. This is the path from the ansible root folder to the folder where the db file is stored."
+  register: db_local_dir_check
+  when: db_local_dir is not defined
+
+- name: check db_file_name is defined
+  debug:
+    msg: "db_file_name must be defined. This is the db file name without .gz at the end. Example: 'db.sql'"
+  register: db_file_name_check
+  when: db_file_name is not defined
+
+- name: fail if missing variables
+  fail:
+    msg: "Required variables were missing. See above."
+  when: db_name_check.skipped is not defined or db_vault_pass_check.skipped is not defined or db_local_dir_check.skipped is not defined

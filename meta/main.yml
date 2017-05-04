@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  author: Katharine Cordes
+  description: Deploys application database on Ubuntu 16.04.
+  min_ansible_version: 1.9
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial

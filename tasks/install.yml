@@ -1,0 +1,37 @@
+---
+- name: create app db
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present
+  become: true
+
+- name: create app db user
+  mysql_user:
+    name: "{{ db_name }}"
+    password: "{{ db_vault_pass }}"
+    priv: "{{ db_name }}.*:ALL"
+    state: present
+  become: true
+
+- name: remove existing db file
+  file:
+    path: "/tmp/{{ db_file_name }}"
+    state: absent
+  become: true
+
+- name: copy db
+  copy:
+    src: "../../../{{ db_local_dir }}/{{ db_file_name }}.gz"
+    dest: /tmp
+  become: true
+
+- name: unpack db
+  command: gunzip {{ db_file_name }}.gz chdir=/tmp
+  become: true
+
+- name: import db
+  mysql_db:
+    name: "{{ db_name }}"
+    state: import
+    target: "/tmp/{{ db_file_name }}"
+  become: true
