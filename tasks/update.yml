@@ -1,0 +1,10 @@
+---
+- name: fetch repo
+  command: git fetch chdir={{ web_app_deploy_path }}
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: pull changes
+  command: git pull --ff-only chdir={{ web_app_deploy_path }}
+  become: true
+  become_user: "{{ web_app_user }}"

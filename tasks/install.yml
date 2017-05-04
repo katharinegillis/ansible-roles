@@ -1,0 +1,91 @@
+---
+- name: install git
+  apt:
+    name: git
+  become: true
+
+- name: create app user
+  user:
+    name: "{{ web_app_user }}"
+    system: true
+    state: present
+  become: true
+
+- name: check ssh directory
+  file:
+    path: "/home/{{ web_app_user }}/.ssh"
+    state: directory
+    mode: "0700"
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: add deploy key to app user
+  copy:
+    content: "{{ web_app_vault_deploy_key }}"
+    dest: "/home/{{ web_app_user }}/.ssh/{{ web_app_deploy_host }}_deploy"
+    mode: "0600"
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: update ssh config
+  blockinfile:
+    dest: "/home/{{ web_app_user }}/.ssh/config"
+    create: true
+    block: |
+      Host {{ web_app_deploy_host }}
+        HostName {{ web_app_deploy_host }}
+        IdentityFile ~/.ssh/{{ web_app_deploy_host }}_deploy
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: update known hosts
+  blockinfile:
+    dest: "/home/{{ web_app_user }}/.ssh/known_hosts"
+    create: true
+    block: "{{ web_app_deploy_host_key }}"
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: create repository folder with group permissions
+  file:
+    path: "{{ web_app_deploy_path }}"
+    state: directory
+    mode: "2775"
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: setup local git repo
+  command: git init --shared=group chdir={{ web_app_deploy_path }}
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: set up sparse checkout
+  command: git config core.sparseCheckout true chdir={{ web_app_deploy_path }}
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: update sparse checkout info
+  blockinfile:
+    dest: "{{ web_app_deploy_path }}/.git/info/sparse-checkout"
+    create: true
+    block: "{{ web_app_checkout_directories }}"
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: add remote repo
+  command: git remote add origin {{ web_app_deploy_repo }} chdir={{ web_app_deploy_path }}
+  register: command_result
+  failed_when: "'already exists' not in command_result.stderr and command_result.stderr"
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: fetch repo
+  command: git fetch chdir={{ web_app_deploy_path }}
+  become: true
+  become_user: "{{ web_app_user }}"
+
+- name: checkout branch to track
+  command: git checkout -t origin/{{ web_app_deploy_branch }} chdir={{ web_app_deploy_path }}
+  failed_when: "'already exists' not in command_result.stderr and command_result.stderr"
+  become: true
+  become_user: "{{ web_app_user }}"

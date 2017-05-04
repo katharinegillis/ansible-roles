@@ -1,0 +1,12 @@
+---
+- include: check_vars.yml
+  tags:
+    - check
+
+- include: install.yml
+  tags:
+    - provision
+
+- include: update.yml
+  tags:
+    - deploy

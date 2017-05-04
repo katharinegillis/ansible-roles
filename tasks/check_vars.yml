@@ -1,0 +1,53 @@
+---
+- name: check web_app_user is defined
+  debug:
+    msg: "web_app_user must be defined. Example: 'webapp'"
+  register: web_app_user_check
+  when: web_app_user is not defined
+
+- name: check web_app_vault_deploy_key is defined
+  debug:
+    msg: "web_app_vault_deploy_key must be defined. It is the public key used to access the web app git repository."
+  register: web_app_vault_deploy_key_check
+  when: web_app_vault_deploy_key is not defined
+
+- name: check web_app_deploy_host is defined
+  debug:
+    msg: "web_app_deploy_host must be defined. It is the domain that hosts the git repository. Example: 'github.com'"
+  register: web_app_deploy_host_check
+  when: web_app_deploy_host is not defined
+
+- name: check web_app_deploy_host_key is defined
+  debug:
+    msg: "web_app_deploy_host_key must be defined. It is the host key for the domain that hosts the git repository."
+  register: web_app_deploy_host_key_check
+  when: web_app_deploy_host_key is not defined
+
+- name: check web_app_deploy_path is defined
+  debug:
+    msg: "web_app_deploy_path must be defined. It is the path where the app code will be deployed to from git."
+  register: web_app_deploy_path_check
+  when: web_app_deploy_path is not defined
+
+- name: check web_app_deploy_repo is defined
+  debug:
+    msg: "web_app_deploy_repo must be defined. It is the git repository to deploy from."
+  register: web_app_deploy_repo_check
+  when: web_app_deploy_repo is not defined
+
+- name: check web_app_checkout_directories is defined
+  debug:
+    msg: "web_app_checkout_directories must be defined. It is the list of directories to checkout from git as a block, one directory per line."
+  register: web_app_checkout_directories_check
+  when: web_app_checkout_directories is not defined
+
+- name: check web_app_deploy_branch is defined
+  debug:
+    msg: "web_app_deploy_branch must be defined. It is the list of directories to checkout from git as a block, one directory per line."
+  register: web_app_deploy_branch_check
+  when: web_app_deploy_branch is not defined
+
+- name: fail if missing variables
+  fail:
+    msg: "Required variables were missing. See above."
+  when: web_app_user_check.skipped is not defined or web_app_vault_deploy_key_check.skipped is not defined or web_app_deploy_host_key_check.skipped is not defined or web_app_deploy_path_check.skipped is not defined or web_app_checkout_directories_check.skipped is not defined or web_app_deploy_branch_check.skipped is not defined or web_app_deploy_repo_check.skipped is not defined
