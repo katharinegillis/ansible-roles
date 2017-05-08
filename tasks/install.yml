@@ -3,6 +3,7 @@
   mysql_db:
     name: "{{ db_name }}"
     state: present
+  register: db_created
   become: true
 
 - name: create app db user
@@ -18,16 +19,19 @@
     path: "/tmp/{{ db_file_name }}"
     state: absent
   become: true
+  when: db_created.changed
 
 - name: copy db
   copy:
     src: "{{ playbook_dir }}/{{ db_local_dir }}/{{ db_file_name }}.gz"
     dest: /tmp
   become: true
+  when: db_created.changed
 
 - name: unpack db
   command: gunzip {{ db_file_name }}.gz chdir=/tmp
   become: true
+  when: db_created.changed
 
 - name: import db
   mysql_db:
@@ -35,3 +39,4 @@
     state: import
     target: "/tmp/{{ db_file_name }}"
   become: true
+  when: db_created.changed
