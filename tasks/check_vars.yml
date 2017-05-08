@@ -13,7 +13,7 @@
 
 - name: check db_local_dir is defined
   debug:
-    msg: "db_local_dir must be dfined. This is the path from the ansible root folder to the folder where the db file is stored."
+    msg: "db_local_dir must be dfined. This is the path from the playbook folder to the folder where the db file is stored."
   register: db_local_dir_check
   when: db_local_dir is not defined
 

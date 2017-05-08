@@ -21,7 +21,7 @@
 
 - name: copy db
   copy:
-    src: "../../../{{ db_local_dir }}/{{ db_file_name }}.gz"
+    src: "{{ playbook_dir }}/{{ db_local_dir }}/{{ db_file_name }}.gz"
     dest: /tmp
   become: true
 
