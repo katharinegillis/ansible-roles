@@ -1,0 +1,41 @@
+---
+- name: check nginx_worker_processes is defined
+  debug:
+    msg: "nginx_worker_processes must be defined. This is the number of workers to give to nginx."
+  register: nginx_worker_processes_check
+  when: nginx_worker_processes is not defined
+
+- name: check nginx_multi_accept is defined
+  debug:
+    msg: "nginx_multi_accept must be defined. This is whether or not to accept multiple connections at a time. Values: on or off"
+  register: nginx_multi_accept_check
+  when: nginx_multi_accept is not defined
+
+- name: check nginx_sendfile is defined
+  debug:
+    msg: "nginx_sendfile must be defined. This is whether or not to use sendfile for static files. Values: on or off"
+  register: nginx_sendfile_check
+  when: nginx_sendfile is not defined
+
+- name: check nginx_keepalive_requests is defined
+  debug:
+    msg: "nginx_keepalive_requests must be defined. This is maximum number of keep alive requests allowed before a connection is closed."
+  register: nginx_keepalive_requests_check
+  when: nginx_keepalive_requests is not defined
+
+- name: check nginx_local_dir is defined
+  debug:
+    msg: "nginx_local_dir must be defined. This is local directory that contains the site templates."
+  register: nginx_local_dir_check
+  when: nginx_local_dir is not defined
+
+- name: check nginx_sites is defined
+  debug:
+    msg: "nginx_sites must be defined. This is the list of sites to set up. It is an array where each element has a name (the domain) and a root (absolute path to the site root)."
+  register: nginx_sites_check
+  when: nginx_sites is not defined
+
+- name: fail if missing variables
+  fail:
+    msg: "Required variables were missing. See above."
+  when: nginx_worker_processes_check.skipped is not defined or nginx_multi_accept_check.skipped is not defined or nginx_sendfile_check.skipped is not defined or nginx_keepalive_requests_check.skipped is not defined or nginx_local_dir_check.skipped is not defined or nginx_sites_check.skipped is not defined
