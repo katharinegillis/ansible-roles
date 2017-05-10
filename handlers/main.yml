@@ -1,0 +1,7 @@
+---
+- name: restart php5.6-fpm
+  service:
+    name: php5.6-fpm
+    state: restarted
+  become: true
+  when: php_packages is defined and "fpm" in php_packages

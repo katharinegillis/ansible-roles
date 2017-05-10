@@ -1,0 +1,42 @@
+---
+- name: add the php repository
+  apt_repository:
+    repo: "ppa:ondrej/php"
+  register: php_repo
+  become: true
+
+- name: update apt-get
+  apt:
+    update_cache: true
+  become: true
+  when: php_repo.changed
+
+- name: install php
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - php5.6
+    - php5.6-common
+  become: true
+
+- name: install additional php packages
+  apt:
+    name: "php5.6-{{ item }}"
+  with_items: "{{ php_packages }}"
+  become: true
+  when: php_packages is defined
+
+- name: start php5.6-fpm service on boot
+  service:
+    name: php5.6-fpm
+    enabled: true
+  when: php_packages is defined and "fpm" in php_packages
+
+- name: copy php-fpm configuration
+  template:
+    src: php.ini.j2
+    dest: /etc/php/5.6/fpm/php.ini
+  become: true
+  notify:
+    - restart php5.6-fpm
+  when: php_packages is defined and "fpm" in php_packages

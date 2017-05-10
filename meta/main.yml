@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  author: Katharine Cordes
+  description: Installs nginx and configures php5.6 on Ubuntu 16.04.
+  min_ansible_version: 1.9
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial

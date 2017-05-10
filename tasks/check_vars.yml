@@ -1,0 +1,35 @@
+---
+- name: check php_memory_limit is defined
+  debug:
+    msg: "php_memory_limit must be defined. This is the max memory allowed for a single request. Example: \"512M\"."
+  register: php_memory_limit_check
+  when: php_memory_limit is not defined
+
+- name: check php_fpm_web_app_user is defined
+  debug:
+    msg: "php_fpm_web_app_user must be defined. This is the web user the app deployed as."
+  register: php_fpm_web_app_user_check
+  when: php_fpm_web_app_user is not defined and php_packages is defined and "fpm" in php_packages
+
+- name: check php_fpm_sock is defined
+  debug:
+    msg: "php_fpm_sock must be defined. This is the socket php-fpm will run through."
+  register: php_fpm_sock_check
+  when: php_fpm_sock is not defined and php_packages is defined and "fpm" in php_packages
+
+- name: check php_fpm_max_children is defined
+  debug:
+    msg: "php_fpm_max_children must be defined. This is the maximum number of processes php-fpm will handle at a time."
+  register: php_fpm_max_children_check
+  when: php_fpm_max_children is not defined and php_packages is defined and "fpm" in php_packages
+
+- name: check php_fpm_local_dir is defined
+  debug:
+    msg: "php_fpm_local_dir must be defined. This is the directory relative to the playbook directory that contains the templates for php-fpm."
+  register: php_fpm_local_dir_check
+  when: php_fpm_local_dir is not defined and php_packages is defined and "fpm" in php_packages
+
+- name: fail if missing variables
+  fail:
+    msg: "Required variables were missing. See above."
+  when: php_memory_limit_check.skipped is not defined or php_fpm_web_app_user_check.skipped is not defined or php_fpm_sock_check.skipped is not defined or php_fpm_max_children_check.skipped is not defined or php_fpm_local_dir_check.skipped is not defined
