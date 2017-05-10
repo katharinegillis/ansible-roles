@@ -1,0 +1,16 @@
+---
+- name: update repositories
+  apt:
+    update_cache: true
+  become: true
+
+- name: install redis
+  apt:
+    name: redis-server
+  become: true
+
+- name: set redis to start on boot
+  service:
+    name: redis
+    enabled: true
+  become: true
