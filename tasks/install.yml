@@ -30,6 +30,7 @@
   service:
     name: php5.6-fpm
     enabled: true
+  become: true
   when: php_packages is defined and "fpm" in php_packages
 
 - name: copy php-fpm configuration
