@@ -1,0 +1,9 @@
+---
+- name: configure php-fpm pool
+  template:
+    src: "{{ playbook_dir }}/{{ php_fpm_local_dir }}/www.conf.j2"
+    dest: "/etc/php/7.1/fpm/pool.d/www.conf"
+  become: true
+  when: php_packages is defined and "fpm" in php_packages
+  notify:
+    - restart php7.1-fpm
