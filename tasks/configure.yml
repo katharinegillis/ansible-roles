@@ -1,4 +1,10 @@
 ---
+- name: ensure sock dir exists
+  file:
+    path: "{{ php_fpm_sock|dirname }}"
+    state: directory
+  become: true
+
 - name: configure php-fpm pool
   template:
     src: "{{ playbook_dir }}/{{ php_fpm_local_dir }}/www.conf.j2"
