@@ -1,0 +1,35 @@
+---
+- name: check certbot_webserver_service is defined
+  debug:
+    msg: "certbot_webserver_service must be defined. This is the name of the webservice that certbot needs to work with."
+  register: certbot_webserver_service_check
+  when: certbot_webserver_service is not defined
+
+- name: check certbot_webserver_owner is defined
+  debug:
+    msg: "certbot_webserver_owner must be defined. This is webserver owner."
+  register: certbot_webserver_owner_check
+  when: certbot_webserver_owner is not defined
+
+- name: check certbot_webserver_group is defined
+  debug:
+    msg: "certbot_webserver_group must be defined. This is webserver group."
+  register: certbot_webserver_group_check
+  when: certbot_webserver_group is not defined
+
+- name: check certbot_email is defined
+  debug:
+    msg: "certbot_email must be defined. This is email for the certificate."
+  register: certbot_email_check
+  when: certbot_email is not defined
+
+- name: check certbot_sites is defined
+  debug:
+    msg: "certbot_sites must be defined. This is an array of the sites to manage certificates for."
+  register: certbot_sites_check
+  when: certbot_sites is not defined
+
+- name: fail if missing variables
+  fail:
+    msg: "Required variables were missing. See above."
+  when: certbot_webserver_service_check.skipped is not defined or certbot_webserver_owner_check.skipped is not defined or certbot_webserver_group_check.skipped is not defined or certbot_email_check.skipped is not defined or certbot_sites_check.skipped is not defined

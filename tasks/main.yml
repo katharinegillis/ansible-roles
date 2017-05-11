@@ -1,0 +1,13 @@
+---
+- include: check_vars.yml
+  tags:
+    - check
+
+- include: install.yml
+  tags:
+    - provision
+
+- include: configure.yml
+  with_items: "{{ certbot_sites }}"
+  tags:
+    - provision

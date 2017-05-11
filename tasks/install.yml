@@ -1,0 +1,30 @@
+---
+- name: add repository
+  apt_repository:
+    repo: "ppa:certbot/certbot"
+  register: certbot_repo_result
+  become: true
+
+- name: update repositories
+  apt:
+    update_cache: true
+  become: true
+  when: certbot_repo_result.changed
+
+- name: install keys
+  command: apt-key update
+  become: true
+  when: certbot_repo_result.changed
+
+- name: install certbot
+  apt:
+    name: certbot
+  become: true
+
+- name: create cron to do renewals
+  cron:
+    name: "certbot auto-renewal"
+    minute: "15"
+    hour: "3"
+    job: "/usr/bin/certbot renew --quiet --renew-hook \"/bin/systemctl reload {{ certbot_webserver_service }}\""
+  become: true

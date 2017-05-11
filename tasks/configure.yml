@@ -1,0 +1,38 @@
+---
+- name: ensure certbot path is available
+  file:
+    path: "{{ item.well_known_path }}"
+    state: directory
+    owner: "{{ certbot_webserver_owner }}"
+    group: "{{ certbot_webserver_group }}"
+  become: true
+
+- name: check if certbot cert already exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ item.name }}/fullchain.pem"
+  register: certbot_cert_stat_result
+  become: true
+
+- name: turn off webservice
+  service:
+    name: "{{ certbot_webserver_service }}"
+    state: stopped
+  become: true
+  when: certbot_cert_stat_result.stat.exists == false
+
+- name: install certificate (first time)
+  command: "certbot certonly --standalone -d {{ item.name }} --email={{ certbot_email }} --non-interactive --agree-tos"
+  become: true
+  when: certbot_cert_stat_result.stat.exists == false
+
+- name: turn on webservice
+  service:
+    name: "{{ certbot_webserver_service }}"
+    state: started
+  become: true
+  when: certbot_cert_stat_result.stat.exists == false
+
+- name: install certificate (already exists)
+  command: "certbot certonly --webroot -w {{ item.well_known_path }} -d {{ item.name }} --email={{ certbot_email }} --non-interactive --agree-tos"
+  become: true
+  when: certbot_cert_stat_result.stat.exists == true
